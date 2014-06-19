@@ -21,34 +21,42 @@ public class BankTest {
     public void checkingAccount() {
         Bank bank = new Bank();
         Account checkingAccount = new Account(Account.CHECKING);
+        checkingAccount.setAccountExistedDays(365);
         Customer bill = new Customer("Bill").openAccount(checkingAccount);
         bank.addCustomer(bill);
 
         checkingAccount.deposit(100.0);
-
-        assertEquals(0.1, bank.totalInterestPaid(), DOUBLE_DELTA);
+        assertEquals(Helper.calcInterest(100, 0.001, 365), bank.totalInterestPaid(), DOUBLE_DELTA); 
     }
 
     @Test
     public void savings_account() {
         Bank bank = new Bank();
-        Account checkingAccount = new Account(Account.SAVINGS);
-        bank.addCustomer(new Customer("Bill").openAccount(checkingAccount));
+        Account savingAccount = new Account(Account.SAVINGS);
+        savingAccount.setAccountExistedDays(365);
+        Customer bill = new Customer("Bill").openAccount(savingAccount);
+        bank.addCustomer(bill);
 
-        checkingAccount.deposit(1500.0);
-
-        assertEquals(2.0, bank.totalInterestPaid(), DOUBLE_DELTA);
+        savingAccount.deposit(1500.0);
+        assertEquals((1 + Helper.calcInterest(1500-1000, 0.002, 365)), bank.totalInterestPaid(), DOUBLE_DELTA);
+    
+        savingAccount.withdraw(1000.0);
+        assertEquals(Helper.calcInterest(500, 0.001, 365), bank.totalInterestPaid(), DOUBLE_DELTA);       
     }
 
     @Test
     public void maxi_savings_account() {
         Bank bank = new Bank();
-        Account checkingAccount = new Account(Account.MAXI_SAVINGS);
-        bank.addCustomer(new Customer("Bill").openAccount(checkingAccount));
+        Account maxAccount = new Account(Account.MAXI_SAVINGS);
+        maxAccount.setAccountExistedDays(365);
+        Customer bill = new Customer("Bill").openAccount(maxAccount);
+        bank.addCustomer(bill);
 
-        checkingAccount.deposit(3000.0);
-
-        assertEquals(170.0, bank.totalInterestPaid(), DOUBLE_DELTA);
+        maxAccount.deposit(200.0);
+        assertEquals(Helper.calcInterest(200, 0.05, 365), bank.totalInterestPaid(), DOUBLE_DELTA);
+        
+        maxAccount.withdraw(100.0);
+        assertEquals(Helper.calcInterest(100, 0.001, 365), bank.totalInterestPaid(), DOUBLE_DELTA);
     }
 
 }
