@@ -30,7 +30,7 @@ public class Customer {
     public double totalInterestEarned() {
         double total = 0;
         for (Account a : accounts)
-            total += a.interestEarned();
+            total += a.interestEarned(a.getAccountExistedDays());
         return total;
     }
 
@@ -44,6 +44,15 @@ public class Customer {
         }
         statement += "\nTotal In All Accounts " + toDollars(total);
         return statement;
+    }
+    
+    public void transfer(Account src, Account des, int amount) {
+    	try {
+    		src.withdraw(amount);
+    	} catch(IllegalArgumentException e) {
+    		throw e;
+    	}
+    	des.deposit(amount);
     }
 
     private String statementForAccount(Account a) {
